@@ -9,27 +9,28 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class ClientConfiguration {
-    @Bean
-    @Profile("sse")
-    public StockClient webClientStockClient(WebClient webClient) {
-        return new WebClientStockClient(webClient);
-    }
 
-    @Bean
-    @Profile("rsocket")
-    public StockClient rSocketStockClient(RSocketRequester rSocketRequester) {
-        return new RSocketStockClient(rSocketRequester);
-    }
+	@Bean
+	@Profile("sse")
+	public StockClient webClientStockClient(WebClient webClient) {
+		return new WebClientStockClient(webClient);
+	}
 
-    @Bean
-    public RSocketRequester rSocketRequester(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") RSocketRequester.Builder builder) {
-        return builder.connectTcp("localhost", 7000).block();
-    }
+	@Bean
+	@Profile("rsocket")
+	public StockClient rSocketStockClient(RSocketRequester rSocketRequester) {
+		return new RSocketStockClient(rSocketRequester);
+	}
 
-    @Bean
-    @ConditionalOnMissingBean
-    public WebClient webClient() {
-        return WebClient.builder().build();
-    }
+	@Bean
+	public RSocketRequester rSocketRequester(RSocketRequester.Builder builder) {
+		return builder.connectTcp("localhost", 7000).block();
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public WebClient webClient() {
+		return WebClient.builder().baseUrl("http://localhost:8080").build();
+	}
 
 }
